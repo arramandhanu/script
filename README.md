@@ -1,6 +1,7 @@
 # script
 Shellscript list for DevOps / Linux Engineer
-
+* Cloud Disk Scaling
+* TBA
 
 # 🚀 Cloud Disk Resizer (AWS & GCP) - Automate EBS & Persistent Disk Scaling
 
