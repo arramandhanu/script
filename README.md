@@ -1,141 +1,309 @@
-# script
-Shellscript list for DevOps / Linux Engineer
-* Cloud Disk Scaling
-* TBA
+# 🛠️ Infrastructure Scripts Collection
 
-# 🚀 Cloud Disk Resizer (AWS & GCP) - Automate EBS & Persistent Disk Scaling
+[![Shell](https://img.shields.io/badge/Shell-Bash%204.0%2B-4EAA25?style=flat-square&logo=gnu-bash&logoColor=white)](https://www.gnu.org/software/bash/)
+[![Python](https://img.shields.io/badge/Python-3.6%2B-3776AB?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)
+[![Kubernetes](https://img.shields.io/badge/Kubernetes-RKE2-326CE5?style=flat-square&logo=kubernetes&logoColor=white)](https://docs.rke2.io/)
+[![License](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)](LICENSE)
+[![Platform](https://img.shields.io/badge/Platform-Linux-FCC624?style=flat-square&logo=linux&logoColor=black)](https://www.linux.org/)
 
-Managing cloud resources efficiently is **critical** for cost optimization and scalability. Manually resizing disks on **AWS (EBS)** and **GCP (Persistent Disks)** can be **time-consuming** and **error-prone**.  
-
-This script automates the process with:  
-✅ **Logging** (Tracks actions in `resize_cloud_disk.log`)  
-✅ **Notifications** (Alerts via `notify-send` for Linux and `osascript` for macOS)  
-✅ **Dry-Run Mode** (Preview actions before execution)  
-✅ **Interactive CLI** (Color-coded UI for an intuitive experience)  
-✅ **Multi-Cloud Support** (Works for AWS & GCP)  
+Production-ready automation scripts for DevOps engineers managing **VMware servers** with **RKE2 Kubernetes** clusters.
 
 ---
 
-## 📌 Features & Functions
+## 📋 Table of Contents
 
-### 📝 Logging: Tracks Every Action
-```bash
-log() {
-    echo -e "$1" | tee -a "$LOG_FILE"
-}
-```
-📌 Why?
-Logging ensures we track every action, making it easier to debug and review past executions.
+- [Features](#-features)
+- [Quick Start](#-quick-start)
+- [Scripts Overview](#-scripts-overview)
+- [Configuration](#-configuration)
+- [Usage Examples](#-usage-examples)
+- [Requirements](#-requirements)
+- [Contributing](#-contributing)
 
-🔔 Notifications: Sends Alerts for Status Updates
-```bash
-notify() {
-    MESSAGE=$1
-    if command -v notify-send &>/dev/null; then
-        notify-send "Cloud Disk Resizer" "$MESSAGE"
-    elif command -v osascript &>/dev/null; then
-        osascript -e "display notification \"$MESSAGE\" with title \"Cloud Disk Resizer\""
-    fi
-}
-```
-📌 Why?
-Sends real-time notifications for status updates, improving usability.
+---
 
-🛑 Dry-Run Mode: Prevents Accidental Execution
-```bash
-if [[ "$DRY_RUN" == "true" ]]; then
-    log "🛑 Dry-Run: Would execute AWS resize command here."
-else
-    aws ec2 modify-volume --volume-id "$VOLUME_ID" --size "$NEW_SIZE" | tee -a "$LOG_FILE"
-fi
-```
-📌 Why?
-This allows users to test the script before applying changes, reducing risk.
+## ✨ Features
 
-🖥️ Interactive CLI with Choice-Based Options
-```bash
-read -p "👉 Enter your choice (1-6): " choice
-case $choice in
-    1) echo "Select Cloud Provider" ;;
-    2) echo "Enter Disk ID" ;;
-    3) echo "Enter New Size" ;;
-    4) echo "Enable/Disable Dry-Run" ;;
-    5) echo "Start Resizing Process" ;;
-    6) echo "Exit" ;;
-    *) echo "Invalid option" ;;
-esac
-```
-📌 Why?
-Instead of hardcoding values, users can interactively select options, improving flexibility!
+| Feature | Description |
+|---------|-------------|
+| 🔍 **Health Checks** | Comprehensive cluster and server monitoring |
+| 🔧 **Troubleshooting** | Interactive debugging tools for K8s and Linux |
+| 🔒 **Security Audit** | CIS benchmark compliance checking |
+| 📦 **Storage Management** | OpenEBS and Minio monitoring |
+| 🚀 **Deployment** | Rolling patches with K8s awareness |
+| 📝 **Logging** | Centralized logging with color output |
+| ⚡ **Dry-Run Mode** | Preview changes before applying |
+| 🌐 **Remote Execution** | Run scripts on remote hosts via SSH |
 
-📖 How to Use
-1️⃣ Clone the Repository
-```bash
-git clone https://github.com/your-repo/cloud-disk-resizer.git
-cd cloud-disk-resizer
-```
-2️⃣ Make the Script Executable
+---
+
+## 🚀 Quick Start
+
+### 1. Clone the Repository
 
 ```bash
-chmod +x resize_cloud_disk.sh
+git clone https://github.com/your-repo/script.git
+cd script
 ```
-3️⃣ Run the Script
+
+### 2. Configure Environment
+
 ```bash
-./resize_cloud_disk.sh
-🔍 Example Executions
-1️⃣ Resizing AWS EBS Volume
-✅ Dry-Run Example
+# Copy sample config
+cp config/settings.env.example config/settings.env
 
-
-👉 Select Cloud Provider: AWS
-👉 Enter AWS Volume ID: vol-0123456789abcdef
-👉 Enter New Size (GB): 100
-👉 Enable Dry-Run? (yes/no): yes
-
-🛑 Dry-Run Mode Enabled.
-🔄 Simulating resizing AWS EBS Volume vol-0123456789abcdef to 100 GB...
-✅ Dry-Run: No actual changes made.
-🔄 Actual Execution
-
-👉 Select Cloud Provider: AWS
-👉 Enter AWS Volume ID: vol-0123456789abcdef
-👉 Enter New Size (GB): 100
-👉 Enable Dry-Run? (yes/no): no
-
-🔄 Resizing AWS EBS Volume vol-0123456789abcdef to 100 GB...
-✅ Resize operation completed.
-2️⃣ Resizing GCP Persistent Disk
-✅ Dry-Run Example
-
-👉 Select Cloud Provider: GCP
-👉 Enter GCP Disk Name: my-disk
-👉 Enter New Size (GB): 200
-👉 Enter GCP Zone: us-central1-a
-👉 Enable Dry-Run? (yes/no): yes
-
-🛑 Dry-Run Mode Enabled.
-🔄 Simulating resizing GCP Persistent Disk my-disk to 200 GB in us-central1-a...
-✅ Dry-Run: No actual changes made.
-🔄 Actual Execution
-
-👉 Select Cloud Provider: GCP
-👉 Enter GCP Disk Name: my-disk
-👉 Enter New Size (GB): 200
-👉 Enter GCP Zone: us-central1-a
-👉 Enable Dry-Run? (yes/no): no
-
-🔄 Resizing GCP Persistent Disk my-disk to 200 GB in us-central1-a...
-✅ Resize operation completed.
+# Edit with your values
+vim config/settings.env
 ```
-🔥 Why This Matters for DevOps Engineers
-	•	Saves time by automating AWS & GCP disk resizing.
-	•	Prevents errors with logging, notifications, and dry-run mode.
-	•	Improves efficiency with a user-friendly interface.
 
-🚀 Try it out & contribute to the project!
-Got ideas for improvements? Open a Pull Request!
+### 3. Make Scripts Executable
 
-📢 Connect & Share
+```bash
+chmod +x kubernetes/*.sh server/*.sh deployment/*.sh monitoring/*.sh monitoring/*.py lib/*.sh
+```
 
-If you found this useful, feel free to share and connect with me on LinkedIn!
-💬 Let’s discuss: #DevOps #CloudComputing #AWS #GCP #Automation #BashScripting
+### 4. Run Your First Script
+
+```bash
+# Check server health
+./server/vm-health-check.sh
+
+# Check K8s cluster health
+./kubernetes/rke2-cluster-health.sh -e dev
+```
+
+---
+
+## 📁 Scripts Overview
+
+### 🐳 Kubernetes
+
+| Script | Description | Usage |
+|--------|-------------|-------|
+| [`rke2-cluster-health.sh`](kubernetes/rke2-cluster-health.sh) | RKE2 cluster health check | `./kubernetes/rke2-cluster-health.sh -e prod -v` |
+| [`k8s-troubleshoot.sh`](kubernetes/k8s-troubleshoot.sh) | Interactive troubleshooting | `./kubernetes/k8s-troubleshoot.sh` |
+| [`openebs-storage-audit.sh`](kubernetes/openebs-storage-audit.sh) | OpenEBS storage monitoring | `./kubernetes/openebs-storage-audit.sh -c` |
+
+### 🖥️ Server Management
+
+| Script | Description | Usage |
+|--------|-------------|-------|
+| [`vm-health-check.sh`](server/vm-health-check.sh) | Server health check | `./server/vm-health-check.sh -r server01` |
+| [`server-network-route.sh`](server/server-network-route.sh) | Network route manager | `./server/server-network-route.sh add` |
+| [`security-hardening-audit.sh`](server/security-hardening-audit.sh) | CIS security audit | `./server/security-hardening-audit.sh -o report.txt` |
+
+### 🚢 Deployment
+
+| Script | Description | Usage |
+|--------|-------------|-------|
+| [`rolling-patch.sh`](deployment/rolling-patch.sh) | K8s-aware rolling patches | `./deployment/rolling-patch.sh -t server01 -d` |
+| [`ansible-wrapper.sh`](deployment/ansible-wrapper.sh) | Ansible deployment wrapper | `./deployment/ansible-wrapper.sh -e staging deploy.yml` |
+
+### 📊 Monitoring
+
+| Script | Description | Usage |
+|--------|-------------|-------|
+| [`minio-health.sh`](monitoring/minio-health.sh) | Minio cluster health | `./monitoring/minio-health.sh -v` |
+| [`debug-toolkit.py`](monitoring/debug-toolkit.py) | Interactive debug toolkit | `./monitoring/debug-toolkit.py -n default` |
+
+### ☁️ Cloud
+
+| Script | Description | Usage |
+|--------|-------------|-------|
+| [`cloud-disk-resize.sh`](cloud/cloud-disk-resize.sh) | AWS/GCP disk resize | `./cloud/cloud-disk-resize.sh` |
+
+---
+
+## ⚙️ Configuration
+
+### Environment Variables
+
+Create your configuration file:
+
+```bash
+cp config/settings.env.example config/settings.env
+```
+
+Key settings:
+
+```bash
+# Kubernetes environments
+KUBECONFIG_DEV=~/.kube/config-dev
+KUBECONFIG_STAGING=~/.kube/config-staging
+KUBECONFIG_PROD=~/.kube/config-prod
+
+# Minio
+MINIO_ENDPOINT=https://minio.example.com
+MINIO_ACCESS_KEY=your-access-key
+MINIO_SECRET_KEY=your-secret-key
+
+# Thresholds
+CPU_WARN=80
+MEM_WARN=80
+DISK_WARN=80
+
+# Notifications
+WEBHOOK_URL=https://hooks.slack.com/services/xxx
+```
+
+### Directory Structure
+
+```
+script/
+├── 📁 lib/                  # Shared libraries
+│   ├── common.sh            # Colors, logging, validation
+│   └── k8s-helpers.sh       # K8s/RKE2 helper functions
+├── 📁 kubernetes/           # K8s management scripts
+├── 📁 server/               # Server management scripts
+├── 📁 deployment/           # Deployment automation
+├── 📁 monitoring/           # Monitoring and debugging
+├── 📁 cloud/                # Cloud provider scripts
+├── 📁 config/               # Configuration files
+│   ├── settings.env         # Your configuration
+│   └── settings.env.example # Sample configuration
+└── README.md
+```
+
+---
+
+## 📖 Usage Examples
+
+### Health Checks
+
+```bash
+# Local server health check
+./server/vm-health-check.sh
+
+# Remote server health check
+./server/vm-health-check.sh -r server01.example.com
+
+# Kubernetes cluster health (verbose)
+./kubernetes/rke2-cluster-health.sh -e prod -v
+
+# Kubernetes cluster health (JSON output)
+./kubernetes/rke2-cluster-health.sh -e prod -j
+```
+
+### Troubleshooting
+
+```bash
+# Interactive K8s troubleshooting
+./kubernetes/k8s-troubleshoot.sh -e staging
+
+# Interactive debug toolkit
+./monitoring/debug-toolkit.py
+
+# Debug toolkit for specific namespace
+./monitoring/debug-toolkit.py -n kube-system
+```
+
+### Security Audit
+
+```bash
+# Local security audit
+./server/security-hardening-audit.sh
+
+# Remote audit with report
+./server/security-hardening-audit.sh -r server01 -o audit_$(date +%Y%m%d).txt
+```
+
+### Patching
+
+```bash
+# Dry-run patch (preview only)
+./deployment/rolling-patch.sh -t server01 -d
+
+# Patch single host
+./deployment/rolling-patch.sh -t server01
+
+# Patch host group
+./deployment/rolling-patch.sh -g webservers
+
+# Patch without reboot
+./deployment/rolling-patch.sh -t server01 --skip-reboot
+```
+
+### Storage Management
+
+```bash
+# OpenEBS storage audit
+./kubernetes/openebs-storage-audit.sh -e dev
+
+# OpenEBS cleanup mode (dry-run)
+./kubernetes/openebs-storage-audit.sh -c -d
+
+# Minio health check (verbose)
+./monitoring/minio-health.sh -v
+```
+
+---
+
+## 📦 Requirements
+
+### System Requirements
+
+| Requirement | Version | Required For |
+|-------------|---------|--------------|
+| Bash | 4.0+ | All scripts |
+| Python | 3.6+ | debug-toolkit.py |
+| kubectl | Latest | K8s scripts |
+| mc | Latest | minio-health.sh |
+| jq | 1.6+ | JSON parsing |
+| ssh | Any | Remote execution |
+
+### Installation
+
+**Ubuntu/Debian:**
+```bash
+sudo apt update
+sudo apt install -y jq bc
+```
+
+**Rocky/RHEL:**
+```bash
+sudo yum install -y jq bc
+```
+
+**Minio Client:**
+```bash
+curl -O https://dl.min.io/client/mc/release/linux-amd64/mc
+chmod +x mc
+sudo mv mc /usr/local/bin/
+```
+
+---
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/new-script`)
+3. Follow the existing code style
+4. Use shared library functions from `lib/common.sh`
+5. Add help text (Usage section in header)
+6. Support dry-run mode where applicable
+7. Test on both Ubuntu and Rocky Linux
+8. Commit your changes (`git commit -m 'Add new script'`)
+9. Push to the branch (`git push origin feature/new-script`)
+10. Open a Pull Request
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+## 👤 Author
+
+**DevOps Infrastructure Team**
+
+- Designed for production environments
+- Tested on 71+ VMware servers
+- RKE2 Kubernetes ready
+
+---
+
+<p align="center">
+  <sub>Built with ❤️ for infrastructure automation</sub>
+</p>
