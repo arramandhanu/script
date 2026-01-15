@@ -17,8 +17,13 @@
 [![Cassandra](https://img.shields.io/badge/Cassandra-NoSQL-1287B1?style=for-the-badge&logo=apachecassandra&logoColor=white)](https://cassandra.apache.org/)
 [![Minio](https://img.shields.io/badge/Minio-Object%20Storage-C72E49?style=for-the-badge&logo=minio&logoColor=white)](https://min.io/)
 [![HAProxy](https://img.shields.io/badge/HAProxy-Load%20Balancer-106DA9?style=for-the-badge&logo=haproxy&logoColor=white)](https://www.haproxy.org/)
-[![Grafana](https://img.shields.io/badge/Loki-Logging-F46800?style=for-the-badge&logo=grafana&logoColor=white)](https://grafana.com/oss/loki/)
+[![Prometheus](https://img.shields.io/badge/Prometheus-Monitoring-E6522C?style=for-the-badge&logo=prometheus&logoColor=white)](https://prometheus.io/)
+[![Grafana](https://img.shields.io/badge/Grafana-Dashboards-F46800?style=for-the-badge&logo=grafana&logoColor=white)](https://grafana.com/)
+[![Loki](https://img.shields.io/badge/Loki-Logging-F46800?style=for-the-badge&logo=grafana&logoColor=white)](https://grafana.com/oss/loki/)
 [![Tempo](https://img.shields.io/badge/Tempo-Tracing-F46800?style=for-the-badge&logo=grafana&logoColor=white)](https://grafana.com/oss/tempo/)
+[![ArgoCD](https://img.shields.io/badge/ArgoCD-GitOps-EF7B4D?style=for-the-badge&logo=argo&logoColor=white)](https://argoproj.github.io/cd/)
+[![Helm](https://img.shields.io/badge/Helm-Charts-0F1689?style=for-the-badge&logo=helm&logoColor=white)](https://helm.sh/)
+[![Netbird](https://img.shields.io/badge/Netbird-VPN-4B32C3?style=for-the-badge&logo=wireguard&logoColor=white)](https://netbird.io/)
 
 ---
 
@@ -33,7 +38,7 @@ Production-ready automation scripts for DevOps engineers managing Linux infrastr
 - [Quick Start](#-quick-start)
 - [Scripts Overview](#-scripts-overview)
 - [Configuration](#-configuration)
-- [Usage Examples](#-usage-examples)
+- [Usage](#-usage)
 - [Requirements](#-requirements)
 
 ---
@@ -41,86 +46,108 @@ Production-ready automation scripts for DevOps engineers managing Linux infrastr
 ## 🚀 Quick Start
 
 ```bash
-# Clone
 git clone https://github.com/your-repo/script.git && cd script
-
-# Configure
 cp config/settings.env.example config/settings.env
-vim config/settings.env
-
-# Make executable
 chmod +x **/*.sh monitoring/*.py
 ```
 
 ---
 
-## 📁 Scripts Overview
+## 📁 Scripts Overview (33 Scripts)
 
 ### 🐳 Kubernetes & RKE2
 
+Scripts for managing RKE2 clusters, storage, and troubleshooting.
+
 | Script | Description |
 |--------|-------------|
-| [`rke2-cluster-health.sh`](kubernetes/rke2-cluster-health.sh) | RKE2 cluster health check |
-| [`k8s-troubleshoot.sh`](kubernetes/k8s-troubleshoot.sh) | Interactive troubleshooting |
-| [`openebs-storage-audit.sh`](kubernetes/openebs-storage-audit.sh) | OpenEBS storage monitoring |
+| `rke2-cluster-health.sh` | RKE2 cluster health check |
+| `k8s-troubleshoot.sh` | Interactive troubleshooting |
+| `openebs-storage-audit.sh` | OpenEBS storage monitoring |
 
 ### 🗄️ Database
 
+Database cluster management for PostgreSQL, ClickHouse, and Cassandra.
+
 | Script | Description |
 |--------|-------------|
-| [`patroni-cluster.sh`](database/patroni-cluster.sh) | PostgreSQL/Patroni cluster management |
-| [`clickhouse-health.sh`](database/clickhouse-health.sh) | ClickHouse cluster monitoring |
-| [`cassandra-health.sh`](database/cassandra-health.sh) | Cassandra cluster status |
+| `patroni-cluster.sh` | PostgreSQL/Patroni: status, lag, switchover, reinit |
+| `clickhouse-health.sh` | ClickHouse: queries, replication, tables, merges |
+| `cassandra-health.sh` | Cassandra: nodetool status, ring, repair, compaction |
 
 ### 💾 Storage
 
+Ceph distributed storage monitoring.
+
 | Script | Description |
 |--------|-------------|
-| [`ceph-health.sh`](storage/ceph-health.sh) | Ceph cluster health (OSD, PG, pools) |
+| `ceph-health.sh` | OSD status, PG states, pools, monitors |
 
 ### 🔧 Infrastructure
 
+Core infrastructure components.
+
 | Script | Description |
 |--------|-------------|
-| [`etcd-health.sh`](infrastructure/etcd-health.sh) | etcd cluster health |
-| [`haproxy-status.sh`](infrastructure/haproxy-status.sh) | HAProxy backend/VIP status |
+| `etcd-health.sh` | etcd cluster: members, leader, alarms, defrag, snapshot |
+| `haproxy-status.sh` | Backend status, VIP check, sessions, errors |
+| `netbird-status.sh` | Netbird VPN: peers, routes, DNS |
 
 ### 📨 Messaging
 
-| Script | Description |
-|--------|-------------|
-| [`kafka-strimzi-health.sh`](messaging/kafka-strimzi-health.sh) | Kafka/Strimzi cluster health |
-
-### 🖥️ Server
+Kafka message queue monitoring.
 
 | Script | Description |
 |--------|-------------|
-| [`vm-health-check.sh`](server/vm-health-check.sh) | Server health check |
-| [`server-network-route.sh`](server/server-network-route.sh) | Network route manager |
-| [`security-hardening-audit.sh`](server/security-hardening-audit.sh) | CIS security audit |
-| [`ssl-cert-manager.sh`](server/ssl-cert-manager.sh) | SSL certificate monitoring |
-| [`incident-response.sh`](server/incident-response.sh) | Incident data collection |
-
-### 🚢 Deployment
-
-| Script | Description |
-|--------|-------------|
-| [`rolling-patch.sh`](deployment/rolling-patch.sh) | K8s-aware rolling patches |
-| [`ansible-wrapper.sh`](deployment/ansible-wrapper.sh) | Ansible deployment wrapper |
+| `kafka-strimzi-health.sh` | Brokers, topics, consumer lag, Strimzi CRDs |
 
 ### 📊 Monitoring
 
+Metrics and observability stack.
+
 | Script | Description |
 |--------|-------------|
-| [`minio-health.sh`](monitoring/minio-health.sh) | Minio cluster health |
-| [`observability-check.sh`](monitoring/observability-check.sh) | Loki/Tempo health |
-| [`debug-toolkit.py`](monitoring/debug-toolkit.py) | Interactive debug toolkit |
+| `prometheus-health.sh` | Targets, alerts, rules, TSDB stats |
+| `grafana-health.sh` | Dashboards, data sources, alerts, users |
+| `promtail-check.sh` | Agent status, targets, metrics |
+| `observability-check.sh` | Loki/Tempo health and queries |
+| `minio-health.sh` | Minio cluster, buckets, disk usage |
+| `jmx-exporter-check.sh` | JVM metrics, K8s pod scanning |
+| `cadvisor-check.sh` | Container metrics, machine info |
+| `debug-toolkit.py` | Interactive debug toolkit (Python) |
+
+### 🖥️ Server
+
+Linux server management and security.
+
+| Script | Description |
+|--------|-------------|
+| `vm-health-check.sh` | CPU, memory, disk, network, services |
+| `server-network-route.sh` | Route management: add, delete, backup |
+| `security-hardening-audit.sh` | CIS benchmark security audit |
+| `ssl-cert-manager.sh` | Certificate scanning, expiry, K8s secrets |
+| `incident-response.sh` | Rapid data collection for incidents |
+
+### 🚢 Deployment & GitOps
+
+Deployment automation and GitOps workflows.
+
+| Script | Description |
+|--------|-------------|
+| `rolling-patch.sh` | K8s-aware rolling patches |
+| `ansible-wrapper.sh` | Ansible deployment wrapper |
+| `helm-manager.sh` | Helm: list, status, history, rollback |
+| `kustomize-helper.sh` | Build, diff, validate, apply |
+| `argocd-status.sh` | Apps, sync status, health, diff |
+| `gitops-sync.sh` | Git sync status, ArgoCD/Flux support |
 
 ### ☁️ Cloud
 
+Cloud provider utilities.
+
 | Script | Description |
 |--------|-------------|
-| [`cloud-disk-resize.sh`](cloud/cloud-disk-resize.sh) | AWS/GCP disk resize |
+| `cloud-disk-resize.sh` | AWS/GCP disk resize |
 
 ---
 
@@ -130,129 +157,82 @@ chmod +x **/*.sh monitoring/*.py
 # config/settings.env
 
 # Kubernetes
-KUBECONFIG_DEV=~/.kube/config-dev
-KUBECONFIG_STAGING=~/.kube/config-staging
 KUBECONFIG_PROD=~/.kube/config-prod
 
-# Patroni
+# Databases
 PATRONI_HOST=patroni.example.com
-PATRONI_PORT=8008
+CLICKHOUSE_HOST=clickhouse.example.com
+CASSANDRA_HOST=cassandra.example.com
 
-# etcd
-ETCD_ENDPOINTS=https://etcd1:2379,https://etcd2:2379
+# Infrastructure
+ETCD_ENDPOINTS=https://etcd1:2379
+HAPROXY_SOCKET=/var/run/haproxy/admin.sock
 
-# Kafka
+# Monitoring
+PROMETHEUS_URL=http://prometheus:9090
+GRAFANA_URL=http://grafana:3000
+LOKI_URL=http://loki:3100
+
+# Messaging
 KAFKA_BOOTSTRAP=kafka:9092
 
-# ClickHouse
-CLICKHOUSE_HOST=clickhouse.example.com
-
-# Minio
-MINIO_ENDPOINT=https://minio.example.com
-
-# Observability
-LOKI_URL=http://loki:3100
-TEMPO_URL=http://tempo:3200
+# GitOps
+ARGOCD_NAMESPACE=argocd
 
 # Thresholds
 CPU_WARN=80
-MEM_WARN=80
 DISK_WARN=80
 CERT_WARN_DAYS=30
 ```
 
 ---
 
-## 📖 Usage Examples
+## 📖 Usage
 
 ### Database
 
 ```bash
-# Patroni cluster status
-./database/patroni-cluster.sh status
-
-# Patroni replication lag
-./database/patroni-cluster.sh lag
-
-# Patroni switchover
-./database/patroni-cluster.sh switchover
+./database/patroni-cluster.sh status        # Cluster status
+./database/patroni-cluster.sh switchover    # Initiate switchover
+./database/clickhouse-health.sh replication # Replication status
 ```
 
-### Storage
+### Monitoring
 
 ```bash
-# Ceph cluster status
-./storage/ceph-health.sh status
-
-# Ceph OSD details
-./storage/ceph-health.sh osd
+./monitoring/prometheus-health.sh targets   # Scrape targets
+./monitoring/grafana-health.sh datasources  # Data source status
+./monitoring/promtail-check.sh status       # Promtail agent
 ```
 
-### Infrastructure
+### GitOps
 
 ```bash
-# etcd health
-./infrastructure/etcd-health.sh status
-
-# HAProxy backend status
-./infrastructure/haproxy-status.sh status
-
-# HAProxy VIP check
-./infrastructure/haproxy-status.sh vip -v 10.0.0.100
-```
-
-### Messaging
-
-```bash
-# Kafka cluster status
-./messaging/kafka-strimzi-health.sh status
-
-# Consumer lag
-./messaging/kafka-strimzi-health.sh lag
-
-# Strimzi operator status
-./messaging/kafka-strimzi-health.sh strimzi
+./deployment/argocd-status.sh apps          # List all apps
+./deployment/argocd-status.sh sync          # Check sync status
+./deployment/helm-manager.sh list           # Helm releases
+./deployment/gitops-sync.sh status          # Git/cluster sync
 ```
 
 ### Incident Response
 
 ```bash
-# Quick collection
-./server/incident-response.sh -q
-
-# Full collection with K8s
-./server/incident-response.sh -k
-
-# Remote collection
-./server/incident-response.sh -r server01 -t 120
-```
-
-### SSL Certificates
-
-```bash
-# Scan local certs
-./server/ssl-cert-manager.sh scan
-
-# Check expiring certs
-./server/ssl-cert-manager.sh expiry -d 60
-
-# Scan K8s TLS secrets
-./server/ssl-cert-manager.sh k8s
+./server/incident-response.sh -k            # Collect with K8s data
+./server/ssl-cert-manager.sh expiry         # Expiring certificates
 ```
 
 ---
 
 ## 📦 Requirements
 
-| Tool | Version | Scripts |
-|------|---------|---------|
-| Bash | 4.0+ | All |
-| Python | 3.6+ | debug-toolkit.py |
-| kubectl | Latest | K8s scripts |
-| jq | 1.6+ | JSON parsing |
-| curl | Any | API calls |
-| socat | Any | HAProxy socket |
-| openssl | Any | SSL scripts |
+| Tool | Scripts |
+|------|---------|
+| Bash 4.0+ | All shell scripts |
+| Python 3.6+ | debug-toolkit.py |
+| kubectl | K8s scripts |
+| helm | helm-manager.sh |
+| jq | JSON parsing |
+| curl | API calls |
 
 ---
 
@@ -260,17 +240,17 @@ CERT_WARN_DAYS=30
 
 ```
 script/
-├── lib/             # Shared libraries
+├── lib/             # common.sh, k8s-helpers.sh, db-helpers.sh
 ├── database/        # Patroni, ClickHouse, Cassandra
 ├── storage/         # Ceph
-├── infrastructure/  # etcd, HAProxy
+├── infrastructure/  # etcd, HAProxy, Netbird
 ├── messaging/       # Kafka/Strimzi
 ├── kubernetes/      # RKE2, K8s, OpenEBS
 ├── server/          # Health, security, SSL, incident
-├── deployment/      # Patching, Ansible
-├── monitoring/      # Minio, Loki/Tempo, debug
+├── deployment/      # Helm, Kustomize, ArgoCD, GitOps
+├── monitoring/      # Prometheus, Grafana, Loki, Tempo
 ├── cloud/           # AWS/GCP
-└── config/          # Settings
+└── config/          # settings.env
 ```
 
 ---
@@ -284,9 +264,3 @@ Developed based on production experience managing government infrastructure proj
 ## 📄 License
 
 MIT License
-
----
-
-<p align="center">
-  <sub>Built for infrastructure automation - Tested on on-premise and cloud environments</sub>
-</p>
